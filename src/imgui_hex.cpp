@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <ctype.h>
+#include <cstdint>
 
 static char HalfByteToPrintable(unsigned char half_byte, bool lower)
 {
@@ -597,7 +598,7 @@ bool ImGui::BeginHexEditor(const char* str_id, ImGuiHexEditorState* state, const
 			if (state->ShowAddress)
 			{
 				if (!state->GetAddressNameCallback || !state->GetAddressNameCallback(state, line_base, address_buf, address_max_chars))
-					ImFormatString(address_buf, (size_t)address_max_chars, "%0.*zX", address_max_chars - 1, (size_t)line_base);
+					ImFormatString(address_buf, (size_t)address_max_chars, "%0*zX", address_max_chars - 1, (size_t)line_base);
 
 				const ImVec2 text_size = ImGui::CalcTextSize(address_buf);
 				draw_list->AddText(cursor, text_color, address_buf);
@@ -659,7 +660,7 @@ bool ImGui::BeginHexEditor(const char* str_id, ImGuiHexEditorState* state, const
 					text[2] = '\0';
 				}
 
-				const ImGuiID id = ImGui::GetID(offset);
+				const ImGuiID id = ImGui::GetID((void*)(intptr_t)offset);
 
 				if (!ImGui::ItemAdd(item_bb, id, 0, ImGuiItemFlags_Inputable))
 					continue;

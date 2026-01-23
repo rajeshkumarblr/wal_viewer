@@ -1,79 +1,76 @@
-My version of hexadecimal editor for the Dear ImGui
+# PostgreSQL WAL Viewer
+
+A specialized viewer for PostgreSQL Write-Ahead Log (WAL) files, built using Dear ImGui. This tool allows users to inspect WAL records, filter them, and understand the internal operations of their PostgreSQL database.
 
 ![image](https://github.com/user-attachments/assets/6092f924-2959-4a68-91f5-963e931cecca)
 
-Features
-1. Automatically adjust visible bytes count depending on the window width
-2. Read-only mode
-3. Optional ascii display
-4. Separators support
-5. Support for lowercase bytes
-6. Keyboard navigation
-7. Custom read/write/name callbacks
-8. Render zeroes as disabled (idea from the ocronut's hex editor version)
-9. Custom highlighting (with automatic text contrast selection)
-10. Clipboard support
+## Features
 
-Example:
+- **Automatic File Loading**: Automatically loads the first WAL file found in the `pg_wal` directory.
+- **Hex Editor View**: Detailed hex view of WAL content.
+- **Record Parsing**: Decodes WAL records to show LSN, XID, Resource Manager, and Length.
+- **Filtering**:
+  - Filter records by LSN range (automatically focused on the active file's range).
+  - Search/Filter by record type.
+- **Navigation**:
+  - Jump to specific offsets.
+  - Keyboard navigation support.
+- **Visual Enhancements**:
+  - Highlighted WAL records.
+  - Read-only mode for safety.
+  - Responsive layout.
 
-> [!NOTE]  
-> Hex editor doesn't require you to implement callbacks at all.
-```cpp
-static ImGuiHexEditorState hex_state;
+## Building the Project
 
-hex_state.ReadCallback = [](ImGuiHexEditorState* state, size_t offset, void* buf, size_t size) -> size_t {
-  SIZE_T read;
-  ReadProcessMemory(GetCurrentProcess(), (char*)state->Bytes + offset, buf, size, &read);
-  return read;
-};
+### Prerequisites
+- CMake (version 3.10 or higher)
+- Make (optional, for Makefile usage)
+- A C++ compiler (GCC or Clang)
+- Dependencies (often included or fetched):
+  - GLFW
+  - OpenGL
+  - Dear ImGui (included in source)
 
-hex_state.WriteCallback = [](ImGuiHexEditorState* state, size_t offset, void* buf, size_t size) -> size_t {
-  SIZE_T write;
-  WriteProcessMemory(GetCurrentProcess(), (char*)state->Bytes + offset, buf, size, &write);
-  return write;
-};
+### Build Instructions
 
-hex_state.GetAddressNameCallback = [](ImGuiHexEditorState* state, size_t offset, char* buf, size_t size) -> bool
-{
-  if (offset >= 0 && offset < sizeof(ImGuiIO))
-  {
-    snprintf(buf, size, "io+%0.*zX", 4, offset);
-    return true;
-  }
+1.  **Clone the repository** (if you haven't already):
+    ```bash
+    git clone <repository_url>
+    cd wal_viewer
+    ```
 
-  return false;
-};
+2.  **Create a build directory**:
+    ```bash
+    mkdir build
+    cd build
+    ```
 
-hex_state.SingleHighlightCallback = [](ImGuiHexEditorState* state, int offset, ImColor* color, ImColor* text_color, ImColor* border_color) -> ImGuiHexEditorHighlightFlags
-{
-  if (offset >= 100 && offset <= 150)
-  {
-    *color = ImColor(user_highlight_color);
-    return ImGuiHexEditorHighlightFlags_Apply | ImGuiHexEditorHighlightFlags_TextAutomaticContrast | ImGuiHexEditorHighlightFlags_Ascii
-      | ImGuiHexEditorHighlightFlags_BorderAutomaticContrast;
-  }
+3.  **Run CMake**:
+    ```bash
+    cmake ..
+    ```
 
-  return ImGuiHexEditorHighlightFlags_None;
-};
+4.  **Build**:
+    ```bash
+    make
+    ```
 
-hex_state.HighlightRanges.clear();
+### Running the Application
 
-{
-    ImGuiHexEditorHighlightRange range;
-    range.From = 200;
-    range.To = 250;
-    range.Color = ImColor(user_highlight_color);
-    range.Flags = ImGuiHexEditorHighlightFlags_TextAutomaticContrast | ImGuiHexEditorHighlightFlags_FullSized 
-        | ImGuiHexEditorHighlightFlags_Ascii | ImGuiHexEditorHighlightFlags_Border | ImGuiHexEditorHighlightFlags_BorderAutomaticContrast;
-    hex_state.HighlightRanges.push_back(range);
-}
+After building, run the executable from the `build` directory:
 
-hex_state.Bytes = (void*)&ImGui::GetIO();
-hex_state.MaxBytes = sizeof(ImGuiIO) + 0x1000;
-
-ImGui::BeginHexEditor("##HexEditor", &hex_state);
-ImGui::EndHexEditor();
+```bash
+./wal_viewer
 ```
 
-TODO:
-- [ ] Support for any amount of address chars for automatical bytes count selection.
+Make sure you have a `pg_wal` directory accessible or configure the application to point to your WAL files.
+
+## Usage
+
+1.  **Launch**: the application will scan `pg_wal` and open the first available file.
+2.  **Inspect**: Click on records in the parsed list to highlight their raw bytes in the hex editor.
+3.  **Filter**: Use the input fields to filter by LSN or record type.
+
+## License
+
+MIT License
