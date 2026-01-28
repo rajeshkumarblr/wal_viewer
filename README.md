@@ -2,7 +2,7 @@
 
 A specialized viewer for PostgreSQL Write-Ahead Log (WAL) files, built using Dear ImGui. This tool allows users to inspect WAL records, filter them, and understand the internal operations of their PostgreSQL database.
 
-![image](https://github.com/user-attachments/assets/6092f924-2959-4a68-91f5-963e931cecca)
+![WAL Viewer Screenshot](resources/screenshot.png)
 
 ## Features
 
