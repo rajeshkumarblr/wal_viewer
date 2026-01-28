@@ -1,2 +1,5 @@
 build/
 .cache/
+connection.json
+*.exe
+*.lnk

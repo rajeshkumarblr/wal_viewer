@@ -14,7 +14,7 @@ A specialized viewer for PostgreSQL Write-Ahead Log (WAL) files, built using Dea
   - Search/Filter by record type.
 - **Navigation**:
   - Jump to specific offsets.
-  - Keyboard navigation support.
+  - Keyboard navigation support.,
 - **Visual Enhancements**:
   - Highlighted WAL records.
   - Read-only mode for safety.

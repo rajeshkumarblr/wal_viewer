@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=WAL Viewer
+Comment=PostgreSQL Write-Ahead Log Viewer
+Exec=/home/rajesh/proj/wal_viewer/build/wal_viewer_gui
+Icon=/home/rajesh/proj/wal_viewer/icon.png
+Terminal=false
+Categories=Development;Database;

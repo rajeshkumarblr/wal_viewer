@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(wal_viewer)
 
 # Set C++ Standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -28,6 +28,32 @@ FetchContent_Declare(
   GIT_TAG        v1.90.1
 )
 FetchContent_MakeAvailable(imgui)
+
+# nlohmann_json
+FetchContent_Declare(
+  json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+  GIT_TAG        v3.11.2
+)
+FetchContent_MakeAvailable(json)
+
+# stb
+FetchContent_Declare(
+  stb
+  GIT_REPOSITORY https://github.com/nlohmann/stb
+  GIT_TAG        master
+)
+# Note: nlohmann/stb is a mirror, or we can use local or other source. 
+# actually let's use a reliable source or just download the single header if needed.
+# FetchContent is fine for standard repos. 'nlohmann/stb' might not be standard.
+# Let's use simple FetchContent for stb from a known mirror or just use the header if it was easier.
+# But sticking to the plan:
+FetchContent_Declare(
+  stb_image
+  GIT_REPOSITORY https://github.com/nothings/stb.git
+  GIT_TAG        master
+)
+FetchContent_MakeAvailable(stb_image)
 
 set(IMGUI_DIR ${imgui_SOURCE_DIR})
 set(IMGUI_SOURCES
@@ -55,10 +81,11 @@ target_include_directories(wal_viewer_gui PRIVATE
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
     src
+    ${stb_image_SOURCE_DIR}
 )
 
 # Link libraries
-target_link_libraries(wal_viewer_gui glfw ${CMAKE_DL_LIBS})
+target_link_libraries(wal_viewer_gui glfw nlohmann_json::nlohmann_json ${CMAKE_DL_LIBS})
 
 # PostgreSQL Headers
 execute_process(
